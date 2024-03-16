@@ -10,30 +10,42 @@ const locationInput = document.querySelector("#location");
 const searchButton = document.querySelector("#search");
 
 async function getWeather(location) {
-  const response = await fetch(
-    `https://api.weatherapi.com/v1/current.json?key=33417db233ee48d59c313733240603&q=${location}`,
-    { mode: "cors" }
-  );
+  try {
+    const response = await fetch(
+      `https://api.weatherapi.com/v1/current.json?key=33417db233ee48d59c313733240603&q=${location}`,
+      { mode: "cors" }
+    );
+    if (!response.ok) {
+      alert("Invalid location or API key");
+      throw new Error("Invalid location or API key");
+    }
+    const data = await response.json();
 
-  const data = await response.json();
-  const degrees_c = data.current.temp_c;
-  const degrees_f = data.current.temp_f;
-  const feelsLike_c = data.current.feelslike_c;
-  const feelsLike_f = data.current.feelslike_f;
-  const humidity = data.current.humidity;
-  const country = data.location.country;
-  const city = data.location.name;
-  // console.log(data);
+    if (!data.current) {
+      alert("Invalid location or API key.");
+      throw new Error("Invalid location or API key.");
+    }
+    const degrees_c = data.current.temp_c;
+    const degrees_f = data.current.temp_f;
+    const feelsLike_c = data.current.feelslike_c;
+    const feelsLike_f = data.current.feelslike_f;
+    const humidity = data.current.humidity;
+    const country = data.location.country;
+    const city = data.location.name;
+    // console.log(data);
 
-  return {
-    degrees_c,
-    degrees_f,
-    feelsLike_c,
-    feelsLike_f,
-    humidity,
-    country,
-    city,
-  };
+    return {
+      degrees_c,
+      degrees_f,
+      feelsLike_c,
+      feelsLike_f,
+      humidity,
+      country,
+      city,
+    };
+  } catch (error) {
+    console.error("There has been a problem with your fetch operation:", error);
+  }
 }
 
 searchButton.addEventListener("click", async (event) => {
