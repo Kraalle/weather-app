@@ -9,9 +9,9 @@ const humidity = document.querySelector("#humidity");
 const locationInput = document.querySelector("#location");
 const searchButton = document.querySelector("#search");
 
-async function getWeather() {
+async function getWeather(location) {
   const response = await fetch(
-    "https://api.weatherapi.com/v1/current.json?key=33417db233ee48d59c313733240603&q=london",
+    `https://api.weatherapi.com/v1/current.json?key=33417db233ee48d59c313733240603&q=${location}`,
     { mode: "cors" }
   );
 
@@ -36,31 +36,24 @@ async function getWeather() {
   };
 }
 
-(async () => {
-  const weatherData = await getWeather();
-  degrees_c.textContent = weatherData.degrees_c + " C";
-  degrees_f.textContent = weatherData.degrees_f + " F";
-  feelsLikeC.textContent = weatherData.feelsLike_c + " C";
-  feelsLikeF.textContent = weatherData.feelsLike_f + " F";
-  humidity.textContent = weatherData.humidity;
-  city.textContent = weatherData.city;
-  country.textContent = weatherData.country;
-  container.appendChild(degrees_c);
-  container.appendChild(degrees_f);
-  container.appendChild(feelsLikeC);
-  container.appendChild(feelsLikeF);
-  container.appendChild(humidity);
-  container.appendChild(country);
-  container.appendChild(city);
-  console.log(weatherData);
-})();
-
-searchButton.addEventListener("click", (event) => {
+searchButton.addEventListener("click", async (event) => {
   event.preventDefault();
-  console.log(locationInput.value);
-  clearInput();
+  const location = locationInput.value.trim();
+  if (location) {
+    const weatherData = await getWeather(location);
+    degrees_c.textContent = `Degrees: ${weatherData.degrees_c} °C`;
+    degrees_f.textContent = `Degrees: ${weatherData.degrees_f} °F`;
+    feelsLikeC.textContent = `Feels like: ${weatherData.feelsLike_c} °C`;
+    feelsLikeF.textContent = `Feels like: ${weatherData.feelsLike_f} °F`;
+    humidity.textContent = `Humidity: ${weatherData.humidity}`;
+    city.textContent = "City: " + weatherData.city;
+    country.textContent = "Country: " + weatherData.country;
+    container.classList.add("result");
+  } else {
+    alert("Please enter a location");
+  }
 });
 
-function clearInput() {
-  locationInput.value = "";
-}
+// function clearInput() {
+//   locationInput.value = "";
+// }
